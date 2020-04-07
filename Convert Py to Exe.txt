@@ -1,0 +1,12 @@
+# install  pyinstaller 
+pip install pyinstaller 
+
+# one File with out console
+ pyinstaller -w -F  SnakeGame.py
+
+
+ # one File with console
+ pyinstaller -F  SnakeGame.py
+
+# with out console  3 files
+ pyinstaller -w  SnakeGame.py
