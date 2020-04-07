@@ -2,7 +2,7 @@ import turtle
 import time
 import random
 
-delay = 0.1
+delay = 0.2
 
 # set up the screen
 wn = turtle.Screen()
@@ -33,8 +33,6 @@ segments = []
 
 
 
-
-
 # functions
 def got_up():
     head.direction = "up"
@@ -45,6 +43,14 @@ def got_left():
 def got_right():
     head.direction = "right"
 
+
+
+# Keyboard binding
+wn.listen()
+wn.onkeypress(got_up, "Up")
+wn.onkeypress(got_down, "Down")
+wn.onkeypress(got_left, "Left")
+wn.onkeypress(got_right, "Right")
 
 
 def move():
@@ -64,17 +70,29 @@ def move():
         x = head.xcor()
         head.setx(x + 20)
 
-# Keyboard binding
-wn.listen()
-wn.onkeypress(got_up, "Up")
-wn.onkeypress(got_down, "Down")
-wn.onkeypress(got_left, "Left")
-wn.onkeypress(got_right, "Right")
 
-# main game loop
-while True:
-    wn.update()
+
+# functions
+
+# check for collision with food
+def food_collision():
+    if head.distance(food) < 20:
+        x = random.randint(-290,290)
+        y = random.randint(-290,290)
+        food.goto(x,y)
+
+        # add new segment
+        new_segment = turtle.Turtle()
+        new_segment.speed(0)
+        new_segment.shape("square")
+        new_segment.color("yellow")
+        new_segment.penup()
+        segments.append(new_segment)
+        return
+
+
     # check for collision  with the border
+def border_collision():
     if head.xcor() > 290 or head.xcor() < -290 or head.ycor() > 290 or head.ycor() < -290:
         time.sleep(1)
         head.goto(0, 0)
@@ -88,19 +106,31 @@ while True:
         segments.clear()
 
 
-    # check for collision with food
-    if head.distance(food) < 20:
-        x = random.randint(-290,290)
-        y = random.randint(-290,290)
-        food.goto(x,y)
+    # check for head collision with the body segments
+def body_collision():
+    for segment  in segments:
+        if segment.distance(head) < 20:
+            time.sleep(1)
+            head.goto(0 ,0)
+            head.direction = "stop"
 
-        # add new segment
-        new_segment = turtle.Turtle()
-        new_segment.speed(0)
-        new_segment.shape("square")
-        new_segment.color("yellow")
-        new_segment.penup()
-        segments.append(new_segment)
+            # hide the segments
+            for segment in segments:
+                segment.goto(1000,1000)
+
+            # clear the segments list
+            segments.clear()
+
+
+# main game loop
+while True:
+    wn.update()
+    # check for collision  with the border
+    border_collision()
+
+    # check for collision with food
+    food_collision()
+
 
     # move the end segment first in reverse
     for index in range(len(segments) - 1, 0, -1):
@@ -115,6 +145,12 @@ while True:
         segments[0].goto(x, y)
 
     move()
+
+    # check for head collision with the body segments
+    body_collision()
+
+
+
     time.sleep(delay)
 
 wn.mainloop()
