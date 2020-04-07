@@ -35,13 +35,17 @@ segments = []
 
 # functions
 def got_up():
-    head.direction = "up"
+    if head.direction != "down":
+        head.direction = "up"
 def got_down():
-    head.direction = "down"
+    if head.direction != "up":
+        head.direction = "down"
 def got_left():
-    head.direction = "left"
+    if head.direction != "right":
+        head.direction = "left"
 def got_right():
-    head.direction = "right"
+    if head.direction != "left":
+        head.direction = "right"
 
 
 
